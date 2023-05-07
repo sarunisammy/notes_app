@@ -405,3 +405,17 @@ svg {
   font-style: italic;
   color: rgba(54, 53, 53, 0.4);
 }
+
+.close__icon {
+  background-color: rgba(255, 0, 0, 0.842);
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.close__icon:hover {
+  background-color: rgb(255, 0, 0);
+}

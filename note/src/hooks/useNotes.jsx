@@ -6,9 +6,28 @@ const NOTES_KEY = "NOTES";
 
 function useNotes() {
   const [notes, setNotes] = useState([]);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [filteredNotes, setFilteredNotes] = useState([]);
 
-  const fethNotes = useCallback(() => {
+  const filterNotes = useCallback(() => {
+    if (search !== "") {
+      console.log("search is not empty... ", search);
+      const newNotes = notes.filter((note) => {
+        const { title, details } = note;
+        return (
+          title.toLowerCase().includes(search.toLowerCase()) ||
+          details.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+      setFilteredNotes(newNotes);
+    } else {
+      console.log("search is empty... ", search);
+      setFilteredNotes(notes);
+    }
+  }, [search, notes]);
+
+  const fetchNotes = useCallback(() => {
     setLoading(true);
     const notesFound = localStorage.getItem(NOTES_KEY);
     if (notesFound) {
@@ -23,12 +42,16 @@ function useNotes() {
     let isMounted = true;
     if (isMounted) {
       console.log("refetching....");
-      fethNotes();
+      fetchNotes();
     }
     return () => {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    filterNotes();
+  }, [filterNotes]);
 
   function addNote(note) {
     console.log("adding note...", note);
@@ -79,7 +102,18 @@ function useNotes() {
   //   setNotes(formatObject("parse", notesFound ?? []));
   // }, [notes]);
 
-  return { notes, loading, setNotes, addNote, editNote, deleteNote };
+  console.log("filteredNotes", filteredNotes);
+
+  return {
+    notes: filteredNotes,
+    loading,
+    search,
+    setSearch,
+    setNotes,
+    addNote,
+    editNote,
+    deleteNote,
+  };
 }
 
 export default useNotes;
